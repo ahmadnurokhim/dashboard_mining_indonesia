@@ -54,6 +54,8 @@ with mid2a:
     # line6a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='copper_concentrate')
     st.altair_chart(line1a, use_container_width=True)
 
+"---"
+
 mid1b, mid2b = st.columns(2)
 with mid1b:
     df_export = pd.read_csv("Data_2/export.csv", delimiter=";")
@@ -61,10 +63,18 @@ with mid1b:
     line1b = alt.Chart(df_export).mark_line(color='red').encode(alt.X('year', timeUnit='yearmonth'), y='migas')
     line2b = alt.Chart(df_export).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='non_migas')
     st.altair_chart(alt.layer(line1b, line2b), use_container_width=True)
+    "Saat kami menelusuri data ekspor, batubara kembali menjadi sorotan. Dengan volume yang mengesankan, ekspor batubara merupakan lebih dari separuh ekspor mineral nonmigas Indonesia. Pengungkapan ini menyoroti peran penting batubara dalam perekonomian negara yang digerakkan oleh ekspor. Namun, ada twist yang menarik dalam kisah ini."
 with mid2b:
     "### Ekspor Pertambangan"
-    ""
-    "Saat kami menelusuri data ekspor, batubara kembali menjadi sorotan. Dengan volume yang mengesankan, ekspor batubara merupakan lebih dari separuh ekspor mineral nonmigas Indonesia. Pengungkapan ini menyoroti peran penting batubara dalam perekonomian negara yang digerakkan oleh ekspor. Namun, ada twist yang menarik dalam kisah ini."
+    "Pada data ekspor, terlihat bahwa ekspor pertambangan non migas hampir secara umum naik sejak tahun 1996 dengan puncak ekspor pada tahun 2013. Namun tidak dapat dikatakan demikian untuk ekspor migas. Ekspor migas cenderung terus menurun dari 1996 dengan titik terendah pada tahun 2019. Pada tahun 2021, proporsi ekspor nonmigas mencapai 95.7% dari total ekspor migas-nonmigas."
+    df_export_pivot = df_export[df_export['year'].dt.year==2021].drop(columns=['year', 'total']).melt(var_name='label', value_name='values')
+    line3b = alt.Chart(df_export_pivot).mark_bar().encode(
+        x='label:N',
+        y='values:Q',
+        color=alt.Color('label:N')
+    )
+    st.altair_chart(alt.layer(line3b), use_container_width=True)
+    
 
     "Paradoks Ekspor Batubara: Volume vs. Nilai"
     "Sementara ekspor batu bara menunjukkan volume yang besar, pemeriksaan lebih dekat mengungkapkan sebuah paradoks yang menarik. Meskipun volume ekspornya tinggi, nilai ekspor batubara tampak relatif tidak stabil dan rendah secara tidak proporsional dibandingkan dengan volumenya. Keganjilan ini mengundang kita untuk menyelidiki lebih jauh faktor-faktor yang mempengaruhi dinamika harga dan kekuatan pasar yang mempengaruhi nilai ekspor batubara."
