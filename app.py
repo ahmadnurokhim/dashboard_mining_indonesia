@@ -47,11 +47,6 @@ with mid2a:
     df_production.iloc[:, 3:4] = df_production.iloc[:, 3:4].multiply(1/1000)
     df_production["year"] = pd.to_datetime(df_production['year'], format='%Y')
     line1a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='coal')
-    # line2a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='bauxite')
-    # line3a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='gold')
-    # line4a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='iron_sand')
-    # line5a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='tin_concentrate')
-    # line6a = alt.Chart(df_production).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='copper_concentrate')
     st.altair_chart(line1a, use_container_width=True)
 
 "---"
@@ -60,21 +55,31 @@ mid1b, mid2b = st.columns(2)
 with mid1b:
     df_export = pd.read_csv("Data_2/export.csv", delimiter=";")
     df_export["year"] = pd.to_datetime(df_export['year'], format='%Y')
-    line1b = alt.Chart(df_export).mark_line(color='red').encode(alt.X('year', timeUnit='yearmonth'), y='migas')
-    line2b = alt.Chart(df_export).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='non_migas')
-    st.altair_chart(alt.layer(line1b, line2b), use_container_width=True)
-    "Saat kami menelusuri data ekspor, batubara kembali menjadi sorotan. Dengan volume yang mengesankan, ekspor batubara merupakan lebih dari separuh ekspor mineral nonmigas Indonesia. Pengungkapan ini menyoroti peran penting batubara dalam perekonomian negara yang digerakkan oleh ekspor. Namun, ada twist yang menarik dalam kisah ini."
+    df_export.iloc[:, 1:] = df_export.iloc[:, 1:] * 1000
+
+    # line1b = alt.Chart(df_export).mark_line(color='red').encode(alt.X('year', timeUnit='yearmonth'), y='migas')
+    # line2b = alt.Chart(df_export).mark_line().encode(alt.X('year', timeUnit='yearmonth'), y='non_migas')
+    # chart_with_labels = alt.layer(line1b, line2b).configure_legend(orient='top-left')
+    linea = alt.Chart(df_export).transform_fold(['non_migas', 'migas'], ['sektor', "volume ekspor"]).mark_line().encode(
+        alt.X('year', timeUnit='yearmonth'),
+        y='volume ekspor:Q',
+        color='sektor:N'
+    )
+    st.altair_chart(linea, use_container_width=True)
+    
 with mid2b:
     "### Ekspor Pertambangan"
     "Pada data ekspor, terlihat bahwa ekspor pertambangan non migas hampir secara umum naik sejak tahun 1996 dengan puncak ekspor pada tahun 2013. Namun tidak dapat dikatakan demikian untuk ekspor migas. Ekspor migas cenderung terus menurun dari 1996 dengan titik terendah pada tahun 2019. Pada tahun 2021, proporsi ekspor nonmigas mencapai 95.7% dari total ekspor migas-nonmigas."
-    df_export_pivot = df_export[df_export['year'].dt.year==2021].drop(columns=['year', 'total']).melt(var_name='label', value_name='values')
+    df_export_pivot = df_export[df_export['year'].dt.year==2021].drop(columns=['year', 'total']).melt(var_name='sektor', value_name='volume ekspor')
     line3b = alt.Chart(df_export_pivot).mark_bar().encode(
-        x='label:N',
-        y='values:Q',
-        color=alt.Color('label:N')
+        x=alt.X('sektor:N', axis=alt.Axis(labelAngle=0)),
+        y='volume ekspor:Q',
+        color=alt.Color('sektor:N'),
+        
     )
     st.altair_chart(alt.layer(line3b), use_container_width=True)
     
+    "Saat kita telusuri lebih lanjut, batubara kembali menarik perhatian. Volume ekspor batubara sendiri mencakup lebih dari separuh volume ekspor mineral non migas Indonesia. Hal ini menyoroti pentingnya peran batubara dalam perekonomian negara yang digerakkan oleh ekspor"
 
     "Paradoks Ekspor Batubara: Volume vs. Nilai"
     "Sementara ekspor batu bara menunjukkan volume yang besar, pemeriksaan lebih dekat mengungkapkan sebuah paradoks yang menarik. Meskipun volume ekspornya tinggi, nilai ekspor batubara tampak relatif tidak stabil dan rendah secara tidak proporsional dibandingkan dengan volumenya. Keganjilan ini mengundang kita untuk menyelidiki lebih jauh faktor-faktor yang mempengaruhi dinamika harga dan kekuatan pasar yang mempengaruhi nilai ekspor batubara."
