@@ -1,6 +1,7 @@
 import streamlit as st
 import altair as alt
 import pandas as pd
+import base64
 
 def get_value_volume_2021():
     # Read the CSV files
@@ -33,35 +34,57 @@ def get_value_volume_2021():
     return df_2021
 
 
+def set_background(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+
 st.set_page_config(layout="wide")
+set_background('coal mining.png')
+css = '''
+<style>
+    .st-c7 {
+        background:transparent;
+    }
+</style>
+'''
+st.markdown(css, unsafe_allow_html=True)
+
 "# Pertambangan Non Migas di Indonesia"
 "**Ahmad Nurokhim (nurokhima20@gmail.com)**"
+"---"
 
 "### Mengenai Industri Pertambangan Non Migas"
 """Dalam beberapa tahun terakhir, sektor pertambangan Indonesia mengalami perkembangan yang cukup signifikan. Indonesia sendiri adalah produsen nikel terbesar pertama dan produsen batu bara terbesar ke tiga di dunia per 2021. Maka dari itu, akan sangat menarik untuk dapat mengeksplorasi aspek-aspek utama di industri ini seperti produksi tahunan, ekspor, dan tren tenaga kerja dari data yang tersedia. Terlebih lagi,  Memahami interkoneksi ini sangat penting bagi pembuat kebijakan, investor, dan pemangku kepentingan untuk membuat keputusan berdasarkan informasi, dan mendorong pertumbuhan yang berkelanjutan."""
 "---"
-met1, met2 = st.columns(2)
-with met1:
-    st.metric("Produksi Non Migas 5 Tahun Terakhir", "647.08 Juta Ton", "45.65%")
-    df_production = pd.read_csv("Data_2/production main clean.csv", delimiter=",")
-    df_production['total'] = df_production.drop(columns='gold').sum(axis=1) + (df_production['gold']/1000)
-    df_production["year"] = pd.to_datetime(df_production['year'], format='%Y')
-    production_chart = alt.Chart(df_production[df_production['year']> pd.to_datetime("2015", format="%Y")]).mark_line().encode(
-        alt.X('year', timeUnit='yearmonth'),
-        y='total',
-    )
-    # st.altair_chart(production_chart, use_container_width=True)
-with met2:
-    st.metric("Ekspor Non Migas 5 Tahun Terakhir", "594.78 Juta Ton", "26.98%")
-    df_export = pd.read_csv("Data_2/export.csv", delimiter=";")
-    df_export.iloc[:, 1:] = df_export.iloc[:, 1:].multiply(1000)
-    df_export["year"] = pd.to_datetime(df_export['year'], format='%Y')
-    export_chart = alt.Chart(df_export[df_export['year']>pd.to_datetime("2015", format="%Y")]).mark_line().encode(
-        alt.X('year', timeUnit='yearmonth'),
-        y='non_migas',
-    )
-    # st.altair_chart(export_chart, use_container_width=True)
+met1, met2, met3, met4 = st.columns(4)
 
+with met1:
+    st.metric("Produksi Non Migas", "647.08 Juta Ton", "45.65%", help="2021 vs 2016")
+
+with met2:
+    st.metric("Ekspor Non Migas", "594.78 Juta Ton", "26.98%", help="2021 vs 2016")
+
+with met3:
+    st.metric("Konsumsi Domestik Batubara", "43.74%", "15.56%", help="2021 vs 2016")
+
+with met4:
+    st.metric("Persentase Pekerja WNI", "99.01%", "-0.35%", help="2021 vs 2016")
+
+with st.expander("Kenapa Metrik Dibandingkan dengan 2016?", False):
+    """Terdapat sejumlah alasan mengapa metrik dibandingkan dengan rentang waktu 5 tahun, yakni:
+- Menganalisis dengan rentang waktu 5 tahun dapat membantu mengidentifikasi tren jangka panjang. Hal ini dapat membantu memahami perubahan, pertumbuhan, stabilitas, dan performa dalam sektor tersebut.
+- Dapat membantu para pembuat keputusan dan pembuat kebijakan dalam melaksanakan tugasnya. Dari sisi pemerintah, pemilu juga diadakan setiap 5 tahun sekali. Maka dari itu, 5 tahun merupakan waktu yang strategis (seimbang antara long term & short term) sehingga akan lebih mudah dalam menganalisis efek dari kebijakan/keputusan sebelumnya untuk merencakan kebijakan/keputusan selanjutnya."""
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Produksi Non Migas', 'Ekspor Pertambangan', 'Volume vs Nilai', 'Konsumsi Domestik Batubara', 'Tenaga Kerja Tambang', 'Kesimpulan'])
 with tab1:
     col_a1, col_a2 = st.columns([2,3])
@@ -72,6 +95,7 @@ with tab1:
         "Menariknya, dari 1996 hingga 2021, produksi batubara tahunan menunjukkan tingkat yang konsisten, dengan sedikit penurunan di tahun 2015. Hal ini menunjukkan kekokohan sektor pertambangan batu bara serta kontribusinya yang signifikan terhadap lanskap pertambangan negara."
 
     with col_a2:
+        chart_placeholder = st.empty()
         options = st.multiselect('Mineral Non Migas', ['coal', 'bauxite', 'gold', 'iron_sand', 'tin_concentrate',
        'copper_concentrate'], default='coal')
         df_production = pd.read_csv("Data_2/production main clean.csv", delimiter=",")
@@ -84,7 +108,7 @@ with tab1:
             y='Volume (Ton):Q',
             color=alt.Color('Mineral:N', scale=alt.Scale(scheme='dark2'))
         )
-        st.altair_chart(line1a, use_container_width=True)
+        chart_placeholder.altair_chart(line1a, use_container_width=True)
         
 with tab2:
     col_b1, col_b2 = st.columns(2)
@@ -93,9 +117,9 @@ with tab2:
         df_export = pd.read_csv("Data_2/export.csv", delimiter=";")
         df_export["year"] = pd.to_datetime(df_export['year'], format='%Y')
         df_export.iloc[:, 1:] = df_export.iloc[:, 1:] * 1000
-        lineb1 = alt.Chart(df_export).transform_fold(['non_migas', 'migas'], ['sektor', "volume ekspor"]).mark_line().encode(
+        lineb1 = alt.Chart(df_export, title="Ekspor Migas vs Non Migas").transform_fold(['non_migas', 'migas'], ['sektor', "Volume Ekspor (ton)"]).mark_line().encode(
             alt.X('year', timeUnit='yearmonth'),
-            y='volume ekspor:Q',
+            y='Volume Ekspor (ton):Q',
             color=alt.Color('sektor:N', scale=alt.Scale(scheme='dark2'))
         )
         st.altair_chart(lineb1, use_container_width=True)
@@ -106,9 +130,9 @@ with tab2:
         df_coal.iloc[:, 1:] = df_coal.iloc[:, 1:] * 1000
         df_export_coal = pd.merge(df_export.drop(columns=['total', 'migas']), df_coal[['year', 'total']], on='year')
         df_export_coal.columns = ['year', 'non_migas', 'batubara']
-        lineb2 = alt.Chart(df_export_coal).transform_fold(['non_migas', 'batubara'], ['sektor', 'volume ekspor']).mark_line().encode(
+        lineb2 = alt.Chart(df_export_coal, title="Ekspor Batubara vs Non Migas").transform_fold(['non_migas', 'batubara'], ['sektor', 'Volume Ekspor (ton)']).mark_line().encode(
             alt.X('year', timeUnit='yearmonth'),
-            y='volume ekspor:Q',
+            y='Volume Ekspor (ton):Q',
             color=alt.Color('sektor:N', scale=alt.Scale(scheme='dark2'))
         )
         st.altair_chart(lineb2, use_container_width=True)
@@ -134,11 +158,11 @@ with tab3:
         
         mid1c1, mid1c2, mid1c3 = st.columns([2,1,2])
         with mid1c1:
-            st.metric("Rasio Volume Ekpor Batubara", "58.1%")
+            st.metric("Rasio Volume Ekpor Batubara", "58.1%", help="Volume dihitung dalam ton")
         with mid1c2:
             "## VS"
         with mid1c3:
-            st.metric("Rasio Nilai Ekspor Batubara", "12.1%")
+            st.metric("Rasio Nilai Ekspor Batubara", "12.1%", help="Nilai dihitung dalam USD")
 
         "Meskipun volume ekspor batubara tergolong tinggi mencapai ***58.1%***, nilai ekspor batubara tampak relatif rendah secara proporsional dibandingkan dengan volume total ekspor non migas."
         "Yakni hanya mencakup ***12.1%*** dari total nilai ekspor non migas."
@@ -195,11 +219,11 @@ with tab5:
         "Industri pertambangan tidak hanya tentang mineral dan ekspor tetapi juga mencakup kehidupan dan mata pencaharian pekerja yang tak terhitung jumlahnya."
         "Dari hasil pengamatan data pekerja pada pertambangan non migas, terdapat beberapa hal menarik:"
         """- Dilihat secara keseluruhan, terdapat gelombang jumlah pekerja WNI pada tahun 2010-2018 dengan puncak jumlah pekerja pada tahun 2014.
-    - Jumlah pekerja SLTA kebawah selalu mendominasi, namun dengan proporsi yang semakin menurun. Hal ini berarti, secara rata-rata, tingkat pendidikan pekerja pertambangan non migas semakin meningkat.
-    - Proporsi pekerja WNA relatif tinggi di awal, lalu turun dengan titik terendah di tahun 2015 dan naik kembali hingga 2020. Namun 2021, proporsi pekerja WNA anjlok ke ***0.99%*** dari total pekerja."""
+- Jumlah pekerja SLTA kebawah selalu mendominasi, namun dengan proporsi yang semakin menurun. Hal ini berarti, secara rata-rata, tingkat pendidikan pekerja pertambangan non migas semakin meningkat.
+- Proporsi pekerja WNA relatif tinggi di awal, lalu turun dengan titik terendah di tahun 2015 dan naik kembali hingga 2020. Namun 2021, proporsi pekerja WNA anjlok ke ***0.99%*** dari total pekerja."""
         "Beberapa tahun terakhir, terkadang muncul isu terkait pekerja asing yang mulai banyak masuk ke berbagai industri di Indonesia, tak terlepas sektor pertambangan. Terlihat dari data bahwa memang benar persentase pekerja WNA meningkat hingga 2020. Hal ini dipengaruhi oleh dua faktor yakni:"
         """- Meningkatnya jumlah pekerja WNA
-    - Menurunnya jumlah pekerja WNI"""
+- Menurunnya jumlah pekerja WNI"""
         "Namun perlu diingat bahwa persentase ini berubah berubah drastis pada tahun 2021, yang kemungkinan besar dipengaruhi oleh COVID-19."
 
     with col_e2:
