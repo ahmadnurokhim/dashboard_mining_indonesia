@@ -49,7 +49,7 @@ def set_background(image_file):
     unsafe_allow_html=True
     )
 
-st.set_page_config(layout="wide")
+st.set_page_config("Pertambangan Non Migas di Indonesia — Ahmad Nurokhim", layout="wide")
 set_background('coal mining.png')
 css = '''
 <style>
@@ -61,7 +61,16 @@ css = '''
 st.markdown(css, unsafe_allow_html=True)
 
 "# Pertambangan Non Migas di Indonesia"
-"**Ahmad Nurokhim (nurokhima20@gmail.com)**"
+head0, head1, head2 = st.columns([0.4,4,4])
+with head0:
+    "Oleh:"
+with head1:
+    "##### **Ahmad Nurokhim**"
+
+with head2:
+    """📧 nurokhima20@gmail.com / nurokhima@outlook.co.id \\
+🔗 [linkedin.com/in/ahmadnurokhim](https://www.linkedin.com/in/ahmadnurokhim/)"""
+
 "---"
 
 "### Mengenai Industri Pertambangan Non Migas"
@@ -136,7 +145,6 @@ with tab2:
             color=alt.Color('sektor:N', scale=alt.Scale(scheme='dark2'))
         )
         st.altair_chart(lineb2, use_container_width=True)
-    "---"
     with col_b2:
         "## Tren Ekspor Pertambangan"
         "Pada data ekspor, terlihat bahwa ekspor pertambangan non migas hampir secara umum naik sejak tahun 1996 dengan puncak ekspor pada tahun 2013. Namun tidak dapat dikatakan demikian untuk ekspor migas."
