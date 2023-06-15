@@ -106,7 +106,7 @@ with tab1:
     with col_a2:
         chart_placeholder = st.empty()
         options = st.multiselect('Mineral Non Migas', ['coal', 'bauxite', 'gold', 'iron_sand', 'tin_concentrate',
-       'copper_concentrate'], default='coal')
+       'copper_concentrate'], default=['coal', 'bauxite', 'gold', 'iron_sand', 'tin_concentrate', 'copper_concentrate'])
         df_production = pd.read_csv("Data_2/production main clean.csv", delimiter=",")
         # df_production.iloc[:, 3:4] = df_production.iloc[:, 3:4].multiply(1/1000)
         df_production['gold'] /= 1000
