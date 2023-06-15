@@ -274,3 +274,4 @@ with tab6:
     "- Tingkat pendidikan rata-rata pekerja sektor pertambangan non migas cenderung meningkat dengan pekerja sarjana/diploma/pasca sarjana memiliki proporsi 13.4% pada 2005, menjadi 31.8% pada 2021."
     "Secara keseluruhan, industri pertambangan non migas di Indonesia, terutama sektor batu bara, memiliki peran penting dalam perekonomian negara, namun industri ini juga memberikan tantangan dan peluang tersendiri yang perlu diperhatikan dalam menjaga pertumbuhan ekonomi dan diversifikasi sumber energi."
 '---'
+"**Sumber data**: Badan Pusat Statistik (data produksi non migas, data ekspor migas-nonmigas, dan publikasi statistik pertambangan non migas)"
