@@ -49,7 +49,7 @@ def set_background(image_file):
     unsafe_allow_html=True
     )
 
-st.set_page_config("Pertambangan Non Migas di Indonesia — Ahmad Nurokhim", layout="wide")
+st.set_page_config("Menelusuri Pertambangan Mineral dan Batubara di Indonesia — Ahmad Nurokhim", layout="wide")
 set_background('coal mining.png')
 css = '''
 <style>
@@ -60,7 +60,7 @@ css = '''
 '''
 st.markdown(css, unsafe_allow_html=True)
 
-"# Pertambangan Non Migas di Indonesia"
+"# Menelusuri Pertambangan Mineral dan Batubara di Indonesia"
 head0, head1, head2 = st.columns([0.4,4,4])
 with head0:
     "Oleh:"
