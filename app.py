@@ -65,7 +65,7 @@ head0, head1, head2 = st.columns([0.4,4,4])
 with head0:
     "Oleh:"
 with head1:
-    "##### **Ahmad Nurokhim**"
+    "##### **Ahmad Nurokhim** (June 2023)"
 
 with head2:
     """📧 nurokhima20@gmail.com / nurokhima@outlook.co.id \\
